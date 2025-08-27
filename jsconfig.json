@@ -1,0 +1,78 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "downlevelIteration": true,
+    "lib": [
+      "DOM",
+      "DOM.Iterable",
+      "ESNext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "paths": {
+      "@/*": [
+        "./src/*"
+      ],
+      "@core/*": [
+        "./src/@core/*"
+      ],
+      "@layouts/*": [
+        "./src/@layouts/*"
+      ],
+      "@menu/*": [
+        "./src/@menu/*"
+      ],
+      "@assets/*": [
+        "./src/assets/*"
+      ],
+      "@components/*": [
+        "./src/components/*"
+      ],
+      "@configs/*": [
+        "./src/configs/*"
+      ],
+      "@data/*": [
+        "./src/data/*"
+      ],
+      "@redux/*": [
+        "./src/redux/*"
+      ],
+      "@schema/*": [
+        "./src/schema/*"
+      ],
+      "@utils/*": [
+        "./src/utils/*"
+      ],
+      "@views/*": [
+        "./src/views/*"
+      ],
+      "@constants/*": [
+        "./src/constants/*"
+      ],
+      "@helpers/*": [
+        "./src/helpers/*"
+      ],
+      "@libs/*": [
+        "./src/libs/*"
+      ],
+    }
+  },
+  "include": [
+    "next.config.mjs",
+    "tailwind.config.js",
+    "**/*.js",
+    "**/*.jsx"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

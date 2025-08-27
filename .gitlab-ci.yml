@@ -1,0 +1,43 @@
+stages:
+  - build-dev
+  - deploy-dev
+
+build-dev:
+  only:
+    - development
+  image: node:22-alpine
+  stage: build-dev
+  before_script:
+    - export NODE_OPTIONS=--max_old_space_size=4096
+  script:
+    - echo "$ENV" >> .env
+    - cat .env  # Debug: Show .env content
+    - sed -i.bak 's/\ || /\n/g' .env
+    - npm install --progress=false
+    - npm run build
+  artifacts:
+    expire_in: 1 week
+    paths:
+      - .next
+      - .env
+
+deploy-dev:
+  only:
+    - development
+  image: ubuntu:22.04
+  stage: deploy-dev
+  before_script:
+    - apt-get update -qy && apt-get install -y rsync sshpass openssh-client
+    - 'which ssh-agent || ( apt-get install -qq openssh-client )'
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo "$SSH_PRIVATE_KEY")
+    - mkdir -p ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\n" > ~/.ssh/config'
+  script:
+    - sshpass rsync -a .next/ $DEV_USERNAME@$DEV_SERVER_IP:$DEV_PATH/.next
+    - sshpass rsync -a public/ $DEV_USERNAME@$DEV_SERVER_IP:$DEV_PATH/public
+    - sshpass rsync -a ecosystem.config.js $DEV_USERNAME@$DEV_SERVER_IP:$DEV_PATH
+    - sshpass rsync -a package.json $DEV_USERNAME@$DEV_SERVER_IP:$DEV_PATH
+    - sshpass rsync -a package-lock.json $DEV_USERNAME@$DEV_SERVER_IP:$DEV_PATH
+    - sshpass rsync -a .env $DEV_USERNAME@$DEV_SERVER_IP:$DEV_PATH || echo "Skipping .env upload, will generate at runtime."
+    - ssh $DEV_USERNAME@$DEV_SERVER_IP "cd $DEV_PATH; echo \"$ENV\" > .env; source ~/.nvm/nvm.sh; pm2 reload ecosystem.config.js"
